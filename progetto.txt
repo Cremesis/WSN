@@ -1,0 +1,7 @@
+CONTROLLO REMOTO
+
+Il sink comunica al nodo sensore quante volte e con quale frequenza una certa grandezza deve essere misurata. Ad esempio, si può richiedere che il nodo sensore misuri la luminosità per 10 volte, con un intervallo di 5 secondi fra una misurazione e la successiva.
+
+Il dato ottenuto da ciascun campionamento è inviato in output al sink. L'input e l'output del nodo sensore sono realizzati tramite interfaccia wireless, con protocollo UDP su una porta a scelta. L'input del sink è inserito dall'utente tramite interfaccia seriale.
+
+Al termine, il nodo si rimette in attesa di nuove istruzioni. 

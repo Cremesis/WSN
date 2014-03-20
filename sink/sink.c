@@ -4,10 +4,10 @@
 
 #include <stdio.h> /* For printf() */
 
-PROCESS(node_process, "Node 2");
-AUTOSTART_PROCESSES(&node_process);
+PROCESS(sink_process, "Sink");
+AUTOSTART_PROCESSES(&sink_process);
 
-PROCESS_THREAD(node_process, ev, data) {
+PROCESS_THREAD(sink_process, ev, data) {
 	PROCESS_BEGIN(); 
 	printf("Hello, world!\n");
 	

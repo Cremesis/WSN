@@ -2,7 +2,7 @@ CONTIKI_PROJECT = node2
 
 all: $(CONTIKI_PROJECT)
 
-CFLAGS = _DWITH_UIP=1
+CFLAGS = -DWITH_UIP=1
 
 CONTIKI = /home/user/contiki-2.7
 
