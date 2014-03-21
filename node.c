@@ -45,7 +45,9 @@ process_post(&node_process, ready, NULL);
 PROCESS_THREAD(node_process, ev, data){
 
 	static struct etimer et;
-	
+	static uip_ipaddr_t addr; //indirizzo del sink
+	uip_ipaddr(&addr, 172,16,254,212);
+
 	PROCESS_BEGIN();
 	simple_udp_register(&udp_connection, UDP_PORT, NULL, UDP_PORT, receiver);
 
