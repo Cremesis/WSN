@@ -1,24 +1,26 @@
 #include "contiki.h"
-#include "dev/sht11-sensor.h"
-#include "dev/light-sensor.h"
-
-#include <stdio.h> /* For printf() */
+#include "contiki-net.h"
+#include "uart1.h"
+#include "slip.h"
+#include "serial-line.h"
+#include "../utils/util.h"
+#include <stdio.h>
+#include <stdlib.h> /*for atoi*/
 
 PROCESS(sink_process, "Sink");
 AUTOSTART_PROCESSES(&sink_process);
 
 PROCESS_THREAD(sink_process, ev, data) {
-	PROCESS_BEGIN(); 
-	printf("Hello, world!\n");
+	PROCESS_BEGIN();
 	
-	static struct etimer et;
-	
-	etimer_set(&et, CLOCK_SECOND*4);
-	
-	while(1) { 
-		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-		printf("Hello, world!\n");
-		etimer_reset(&et);
+	while(1) {
+		printf("Inserisci il numero del nodo con cui vuoi comunicare:>\n");
+
+		uart1_set_input(slip_input_byte);
+
+		PROCESS_WAIT_EVENT_UNTIL(ev == serial_line_event_message);
+
+     		printf("received number: %s\n", (char *) data);
 	}
 	PROCESS_END(); 
 }

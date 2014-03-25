@@ -2,18 +2,9 @@
 #include "contiki.h"
 #include "dev/light-sensor.h"
 #include "dev/sht11-sensor.h"
+#include "../utils/util.h"
 #include <stdlib.h>
 #include <stdint.h>
-
-#define LIGHT 0
-#define TEMP 1
-
-#define UDP_PORT 1234
-
-#define GET_MEASURE(a) ((a[0] >> 5) & 7)
-#define GET_DELAY(a) (a[0] & 31)
-#define GET_COUNT(a) (a[1])
-#define COPY_MSG(a, b) do {a[0] = b[0]; a[1] = b[1];} while(0)
 
 static struct simple_udp_connection udp_connection;
 static process_event_t ready;
@@ -46,9 +37,13 @@ PROCESS_THREAD(node_process, ev, data) {
 	static uip_ipaddr_t addr; //indirizzo del sink
 	static unsigned char localMsg[2];
 
+	// Set host address by setting last unique byte (used default subnet and network address)
+	SET_HOST_ADDR(2);
+
 	PROCESS_BEGIN();
 
-	uip_ipaddr(&addr, 172,16,25,47);
+	// The sink will have a "1" as the last byte of its address (used default subnet and network address)
+	GET_ADDR(addr, 1);
 
 	simple_udp_register(&udp_connection, UDP_PORT, NULL, UDP_PORT, receiver);
 
@@ -56,7 +51,7 @@ PROCESS_THREAD(node_process, ev, data) {
 		PROCESS_WAIT_EVENT_UNTIL(ev == ready);
 		localMsg[0] = msg[0];
 		localMsg[1] = msg[1];
-		etimer_set(&et, 5000);
+		etimer_set(&et, 5*CLOCK_SECOND);
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 		printf("MISURA mis: %u tim: %u qut: %u\n", GET_MEASURE(localMsg), GET_DELAY(localMsg), GET_COUNT(localMsg));
 		//simple_udp_sendto(&udp_connection, "test", 4, &addr);
