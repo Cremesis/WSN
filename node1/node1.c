@@ -37,15 +37,12 @@ PROCESS_THREAD(node_process, ev, data) {
 	static uip_ipaddr_t addr; //indirizzo del sink
 	static unsigned char localMsg[2];
 
-	// Set host address by setting last unique byte (used default subnet and network address)
-	SET_HOST_ADDR(2);
-
 	PROCESS_BEGIN();
 
 	// The sink will have a "1" as the last byte of its address (used default subnet and network address)
-	GET_ADDR(addr, 1);
+	GET_ADDR(addr, SINK);
 
-	simple_udp_register(&udp_connection, UDP_PORT, NULL, UDP_PORT, receiver);
+	simple_udp_register(&udp_connection, UDP_PORT_COMMUN, NULL, UDP_PORT_COMMUN, receiver);
 
 	while(1){
 		PROCESS_WAIT_EVENT_UNTIL(ev == ready);
