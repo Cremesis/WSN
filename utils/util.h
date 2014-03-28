@@ -26,8 +26,8 @@
 					uip_ipaddr(&a, 172, 16, 25, 47);\
 					break;\
 				case NODE2:\
-                    uip_ipaddr(&a, 172, 16, 254, 49);\
-                    break;\
+                                        uip_ipaddr(&a, 172, 16, 254, 49);\
+                                        break;\
 				}} while(0)
 
 #define MAX_MEASURE 31
