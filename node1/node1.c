@@ -48,30 +48,31 @@ PROCESS_THREAD(node_process, ev, data) {
 		PROCESS_WAIT_EVENT_UNTIL(ev == ready);
 		localMsg[0] = msg[0];
 		localMsg[1] = msg[1];
-		etimer_set(&et, 5*CLOCK_SECOND);
-		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+		
 		printf("MISURA mis: %u tim: %u qut: %u\n", GET_MEASURE(localMsg), GET_DELAY(localMsg), GET_COUNT(localMsg));
-		//simple_udp_sendto(&udp_connection, "test", 4, &addr);
-
-		/*if(physical_quantity == LIGHT){
-			SENSORS_ACTIVATE(light_sensor);
-			while(n_samples > 0){
-				simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
-				n_samples--;
-				etimer_set(&et, period*CLOCK_SECOND);
-				PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
-			}
-			SENSORS_DEACTIVATE(light_sensor);
+		
+		switch(GET_MEASURE(localMsg)){
+			case LIGHT:
+				SENSORS_ACTIVATE(light_sensor);
+				while(GET_COUNT(localMsg)){
+					simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
+					n_samples--;
+					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
+					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
+				}
+				SENSORS_DEACTIVATE(light_sensor);
+				break;
+			case TEMP:
+				SENSORS_ACTIVATE(sht11_sensor);
+				while(GET_COUNT(localMsg)){
+					simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
+					n_samples--;
+					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
+					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
+				}
+				SENSORS_DEACTIVATE(sht11_sensor);
+				break;
 		}
-		else if(physical_quantity == TEMP){
-			SENSORS_ACTIVATE(sht11_sensor);
-			while(n_samples > 0){
-				simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
-				n_samples--;
-				etimer_set(&et, period*CLOCK_SECOND);
-				PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
-			}
-			SENSORS_DEACTIVATE(sht11_sensor);*/
-	}
+
 	PROCESS_END();
 }
