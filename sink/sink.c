@@ -108,26 +108,13 @@ static void communReceiver(
 
 		printf("COMMUN Data received on port %d from %d.%d.%d.%d with length %d\n", receiver_port, uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), datalen);
 		
-		unsigned char receivedMsg[4];
-		
-		receivedMsg[0] = data[0] - '0';
-	        receivedMsg[1] = data[1] - '0';
-	        receivedMsg[2] = data[2] - '0';
-	        receivedMsg[3] = data[3] - '0';
-		
-		int measure = 0;
-		int i = 0;
-		
-		for(i = 0; i < datalen-1; i++) {
-		measure = measure * 10 + receivedMsg[i];
-		}
 		
 		switch(physical_quantity){
 			case LIGHT:
-				printf("Light: %d\n", 46 * measure / 10);
+				printf("Light: %d\n", 46 * *(int*)data / 10);
 				break;
 			case TEMP:
-				printf("Temperature: %d.%d\n", (measure / 10 - 396) / 10, (measure / 10 - 396) % 10);
+				printf("Temperature: %d.%d\n", (*(int*)data / 10 - 396) / 10, (*(int*)data / 10 - 396) % 10);
 				break;
 		}
 		
