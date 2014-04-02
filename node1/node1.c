@@ -103,31 +103,29 @@ PROCESS_THREAD(node_process, ev, data) {
 
 		printf("MISURA mis: %u tim: %u qut: %u\n", GET_MEASURE(localMsg), GET_DELAY(localMsg), GET_COUNT(localMsg));
 
-		
+if (GET_MEASURE(localMsg) == LIGHT) {
 
-		switch(GET_MEASURE(localMsg)){
-
-			case LIGHT:
-
+				printf("Attivazione sensori luce\n");
 				SENSORS_ACTIVATE(light_sensor);
 
-				while(GET_COUNT(localMsg) > 0){
+				printf("Set Timer %u\n", GET_DELAY(localMsg));
+				etimer_set(&et, GET_DELAY(localMsg) * CLOCK_SECOND);
 
+				while(GET_COUNT(localMsg) > 0){
+					printf("Produzione %u misura\n", GET_COUNT(localMsg));
 					simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
 
 					SET_COUNT(localMsg, GET_COUNT(localMsg) - 1);
 
-					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
-
-					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
+					printf("In attesa su timer\n");
+					PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+					etimer_reset(&et);
+					printf("End Timer\n");
 
 				}
-
+				printf("Disattivazione sensori luce\n");
 				SENSORS_DEACTIVATE(light_sensor);
-
-				break;
-
-			case TEMP:
+} else {
 
 				SENSORS_ACTIVATE(sht11_sensor);
 
@@ -145,9 +143,6 @@ PROCESS_THREAD(node_process, ev, data) {
 
 				SENSORS_DEACTIVATE(sht11_sensor);
 
-				break;
-
-		}
 	}
 
 

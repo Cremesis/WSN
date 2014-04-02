@@ -6,6 +6,7 @@
 
 #define LIGHT 0
 #define TEMP 1
+
 #define UDP_PORT 1234
 
 static struct simple_udp_connection udp_connection;
@@ -18,37 +19,29 @@ static int period;            //periodo di campionamento espresso in secondi
 PROCESS(node_process, "Node process");
 AUTOSTART_PROCESSES(&node_process);
 
-static void
-receiver(struct simple_udp_connection *c,
-         const uip_ipaddr_t *sender_addr,
-         uint16_t sender_port,
-         const uip_ipaddr_t *receiver_addr,
-         uint16_t receiver_port,
-         const uint8_t *data,
-         uint16_t datalen)
-{
-  printf("Data received on port %d from port %d with length %d\n",
-         receiver_port, sender_port, datalen);
- 
-/*In questa funzione si andranno a settare physical_quantity, n_samples e period, tali
- *valori sono stati spediti dal sink e sono passati alla funzione nel parametro data.
- *	
- *Bisogna vedere il formato dei messaggi che invia il sink per poter estrarre correttamente 
- *i valori dal vettore di uint8
- *
- *Una volta fatto questo, la funziona posta un evento al thread per fargli iniziare il campionamento
- */
-ready = process_alloc_event();
-process_post(&node_process, ready, NULL);
+static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender_addr, uint16_t sender_port, const uip_ipaddr_t *receiver_addr, uint16_t receiver_port, const uint8_t *data, uint16_t datalen) {
+	printf("Data received on port %d from port %d with length %d\n", receiver_port, sender_port, datalen);
+
+	/*In questa funzione si andranno a settare physical_quantity, n_samples e period, tali
+	 *valori sono stati spediti dal sink e sono passati alla funzione nel parametro data.
+	 *	
+	 *Bisogna vedere il formato dei messaggi che invia il sink per poter estrarre correttamente 
+	 *i valori dal vettore di uint8
+	 *
+	 *Una volta fatto questo, la funziona posta un evento al thread per fargli iniziare il campionamento
+	 */
+	ready = process_alloc_event();
+	process_post(&node_process, ready, NULL);
 }
 
-PROCESS_THREAD(node_process, ev, data){
-
+PROCESS_THREAD(node_process, ev, data) {
 	static struct etimer et;
 	static uip_ipaddr_t addr; //indirizzo del sink
-	uip_ipaddr(&addr, 172,16,254,212);
-
+	
 	PROCESS_BEGIN();
+	
+	uip_ipaddr(&addr, 172,16,254,212);
+	
 	simple_udp_register(&udp_connection, UDP_PORT, NULL, UDP_PORT, receiver);
 
 	while(1){
