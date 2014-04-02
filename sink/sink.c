@@ -73,7 +73,7 @@ static void configReceiver(
 			printf("\nHow many measures?\n\n");
 		} else {
 			printf("\nATTENTION: Delay must must be between 1 and %d\n\n", MAX_DELAY);
-			printf("\nHow long between measures? (in seconds)\n\n");
+			printf("\nWhat delay do you want between measures? (in seconds)\n\n");
 		}
 		break;
 
@@ -87,6 +87,7 @@ static void configReceiver(
 			sendMsg[0] = 0;
 			sendMsg[1] = 0;
 			printf("\nREQUEST SENT!\n\n");
+			printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2);
 		} else {
 			printf("\nATTENTION: Number of measures must be between 1 and %d\n\n", MAX_COUNT);
 			printf("\nHow many measures?\n\n");
@@ -109,7 +110,7 @@ static void communReceiver(
 				printf("From: %d.%d.%d.%d\tLight: %d\n", uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), *((int*)data) * 46 / 10);
 				break;
 			case TEMP:
-				printf("From: %d.%d.%d.%d\tTemperature: %d.%d\n", receiver_port, uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), (*((int*)data) / 10 - 396) / 10, (*((int*)data) / 10 - 396) % 10);
+				printf("From: %d.%d.%d.%d\tTemperature: %d.%d\n", uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), (*((int*)data) / 10 - 396) / 10, (*((int*)data) / 10 - 396) % 10);
 				break;
 		}
 		
