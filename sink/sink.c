@@ -23,7 +23,6 @@ static void configReceiver(
 	const uint8_t *data,
 	uint16_t datalen) {
 
-		printf("CONFIG Data received on port %d from %d.%d.%d.%d with length %d, content first two bytes: %u, %u\n", receiver_port, uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), datalen, data[0], data[1]);
 	static long input;
 	static unsigned char receivedMsg[3];
 	static int i = 0;
@@ -33,7 +32,7 @@ static void configReceiver(
 	receivedMsg[2] = data[2] - '0';
 
 	if(datalen != 4) { // Not a valid input
-		printf("Not a valid input\n\n");
+		printf("ATTENTION: Exactly 3 digits allowed!\n\n");
 		return;
 	}
 
@@ -41,8 +40,6 @@ static void configReceiver(
 	for(i = 0; i < datalen-1; i++) {
 		input = input * 10 + receivedMsg[i];
 	}
-
-	printf("INPUT IS: %d\n\n", input);
 
 	switch(configState) {
 
@@ -85,7 +82,7 @@ static void configReceiver(
 			SET_COUNT(sendMsg, input);
 			configState = 0;
 
-			printf("\nThe final packet is [0] = %u, [1] = %u\n", sendMsg[0], sendMsg[1]);
+			//printf("\nThe final packet is [0] = %u, [1] = %u\n", sendMsg[0], sendMsg[1]);
 			simple_udp_sendto(&udp_connection_commun, sendMsg, 2, &addr);
 			sendMsg[0] = 0;
 			sendMsg[1] = 0;
@@ -107,16 +104,12 @@ static void communReceiver(
 	uint16_t receiver_port,
 	const uint8_t *data,
 	uint16_t datalen) {
-
-		printf("COMMUN Data received on port %d from %d.%d.%d.%d with length %d\n", receiver_port, uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), datalen);
-		
-		
 		switch(physical_quantity){
 			case LIGHT:
-				printf("Light: %d\n", 46 * ((*(int*)data) / 10));
+				printf("From: %d.%d.%d.%d\tLight: %d\n", uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), *((int*)data) * 46 / 10);
 				break;
 			case TEMP:
-				printf("Temperature: %d.%d\n", ((*(int*)data) / 10 - 396) / 10, ((*(int*)data) / 10 - 396) % 10);
+				printf("From: %d.%d.%d.%d\tTemperature: %d.%d\n", receiver_port, uip_ipaddr1(sender_addr), uip_ipaddr2(sender_addr), uip_ipaddr3(sender_addr), uip_ipaddr4(sender_addr), (*((int*)data) / 10 - 396) / 10, (*((int*)data) / 10 - 396) % 10);
 				break;
 		}
 		
