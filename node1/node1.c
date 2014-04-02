@@ -55,7 +55,7 @@ PROCESS_THREAD(node_process, ev, data) {
 			SENSORS_ACTIVATE(light_sensor);
 			for (i = 0; i < GET_COUNT(localMsg); i++) {
 				measure = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
-				printf("[NODE    ] Produzione %u misura %d\n", GET_COUNT(localMsg), measure);
+				printf("[NODE    ] Produzione %u misura %d\n", i, measure);
 				simple_udp_sendto(&udp_connection, &measure, sizeof(int), &addr);
 
 				printf("[NODE    ] In attesa su timer\n");
@@ -70,7 +70,7 @@ PROCESS_THREAD(node_process, ev, data) {
 			SENSORS_ACTIVATE(sht11_sensor);
 			for (i = 0; i < GET_COUNT(localMsg); i++) {
 				measure = sht11_sensor.value(SHT11_SENSOR_TEMP);
-				printf("[NODE    ] Produzione %u misura %d\n", GET_COUNT(localMsg), measure);
+				printf("[NODE    ] Produzione %u misura %d\n", i, measure);
 				simple_udp_sendto(&udp_connection, &measure, sizeof(int), &addr);
 
 				printf("[NODE    ] In attesa su timer\n");
