@@ -87,6 +87,8 @@ static void configReceiver(
 
 			printf("\nThe final packet is [0] = %u, [1] = %u\n", sendMsg[0], sendMsg[1]);
 			simple_udp_sendto(&udp_connection_commun, sendMsg, 2, &addr);
+			sendMsg[0] = 0;
+			sendMsg[1] = 0;
 			printf("\nREQUEST SENT!\n\n");
 		} else {
 			printf("\nATTENTION: Number of measures must be between 1 and %d\n\n", MAX_COUNT);
