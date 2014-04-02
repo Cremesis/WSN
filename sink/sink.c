@@ -62,7 +62,7 @@ static void configReceiver(
 			SET_MEASURE(sendMsg, input);
 			physical_quantity = input;
 			configState++;
-			printf("\nHow long between measures? (in seconds)\n\n");
+			printf("\nWhat delay do you want between measures? (in seconds)\n\n");
 		} else {
 			printf("\nATTENTION: Measure not available\n\n");
 			printf("\nWhat do you want to measure?\n\n\t* %d = Light\n\t* %d = Temperature\n\n", LIGHT, TEMP);
@@ -111,10 +111,10 @@ static void communReceiver(
 		
 		switch(physical_quantity){
 			case LIGHT:
-				printf("Light: %d\n", 46 * *(int*)data / 10);
+				printf("Light: %d\n", 46 * ((*(int*)data) / 10));
 				break;
 			case TEMP:
-				printf("Temperature: %d.%d\n", (*(int*)data / 10 - 396) / 10, (*(int*)data / 10 - 396) % 10);
+				printf("Temperature: %d.%d\n", ((*(int*)data) / 10 - 396) / 10, ((*(int*)data) / 10 - 396) % 10);
 				break;
 		}
 		
