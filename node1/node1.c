@@ -143,9 +143,9 @@ if (GET_MEASURE(localMsg) == LIGHT) {
 
 				SENSORS_DEACTIVATE(sht11_sensor);
 
+		}
+
 	}
-
-
 
 	PROCESS_END();
 
