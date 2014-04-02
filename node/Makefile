@@ -1,4 +1,4 @@
-CONTIKI_PROJECT = node1
+CONTIKI_PROJECT = node
 
 all: $(CONTIKI_PROJECT)
 
