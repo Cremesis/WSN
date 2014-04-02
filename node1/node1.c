@@ -56,7 +56,7 @@ PROCESS_THREAD(node_process, ev, data) {
 				SENSORS_ACTIVATE(light_sensor);
 				while(GET_COUNT(localMsg) > 0){
 					simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
-					SET_COUNT(GET_COUNT(localMsg) - 1);
+					SET_COUNT(msg, GET_COUNT(localMsg) - 1);
 					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
 					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 				}
@@ -66,7 +66,7 @@ PROCESS_THREAD(node_process, ev, data) {
 				SENSORS_ACTIVATE(sht11_sensor);
 				while(GET_COUNT(localMsg) > 0){
 					simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
-					SET_COUNT(GET_COUNT(localMsg) - 1);
+					SET_COUNT(msg, GET_COUNT(localMsg) - 1);
 					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
 					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 				}
@@ -75,4 +75,5 @@ PROCESS_THREAD(node_process, ev, data) {
 		}
 
 	PROCESS_END();
+	}
 }
