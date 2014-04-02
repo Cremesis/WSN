@@ -8,7 +8,7 @@
 
 static struct simple_udp_connection udp_connection;
 static process_event_t ready;
-static unsigned char msg[2];
+static uint8_t msg[2];
 
 PROCESS(node_process, "Node process");
 AUTOSTART_PROCESSES(&node_process);
@@ -35,7 +35,7 @@ static void receiver(struct simple_udp_connection *c, const uip_ipaddr_t *sender
 PROCESS_THREAD(node_process, ev, data) {
 	static struct etimer et;
 	static uip_ipaddr_t addr; //indirizzo del sink
-	static unsigned char localMsg[2];
+	static uint8_t localMsg[2];
 
 	PROCESS_BEGIN();
 
@@ -56,7 +56,7 @@ PROCESS_THREAD(node_process, ev, data) {
 				SENSORS_ACTIVATE(light_sensor);
 				while(GET_COUNT(localMsg) > 0){
 					simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
-					SET_COUNT(msg, GET_COUNT(localMsg) - 1);
+					SET_COUNT(localMsg, GET_COUNT(localMsg) - 1);
 					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
 					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 				}
@@ -66,7 +66,7 @@ PROCESS_THREAD(node_process, ev, data) {
 				SENSORS_ACTIVATE(sht11_sensor);
 				while(GET_COUNT(localMsg) > 0){
 					simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
-					SET_COUNT(msg, GET_COUNT(localMsg) - 1);
+					SET_COUNT(localMsg, GET_COUNT(localMsg) - 1);
 					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
 					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 				}
