@@ -103,17 +103,20 @@ PROCESS_THREAD(node_process, ev, data) {
 
 		printf("MISURA mis: %u tim: %u qut: %u\n", GET_MEASURE(localMsg), GET_DELAY(localMsg), GET_COUNT(localMsg));
 
+		printf("Set Timer %u\n", GET_DELAY(localMsg));
+		etimer_set(&et, GET_DELAY(localMsg) * CLOCK_SECOND);
+
 if (GET_MEASURE(localMsg) == LIGHT) {
 
 				printf("Attivazione sensori luce\n");
 				SENSORS_ACTIVATE(light_sensor);
 
-				printf("Set Timer %u\n", GET_DELAY(localMsg));
-				etimer_set(&et, GET_DELAY(localMsg) * CLOCK_SECOND);
+
 
 				while(GET_COUNT(localMsg) > 0){
-					printf("Produzione %u misura\n", GET_COUNT(localMsg));
-					simple_udp_sendto(&udp_connection, light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR), sizeof(int), &addr);
+					int temp = light_sensor.value(LIGHT_SENSOR_TOTAL_SOLAR);
+					printf("Produzione %u misura %d\n", GET_COUNT(localMsg), temp);
+					simple_udp_sendto(&udp_connection, &temp, sizeof(int), &addr);
 
 					SET_COUNT(localMsg, GET_COUNT(localMsg) - 1);
 
@@ -126,21 +129,25 @@ if (GET_MEASURE(localMsg) == LIGHT) {
 				printf("Disattivazione sensori luce\n");
 				SENSORS_DEACTIVATE(light_sensor);
 } else {
-
+	printf("Attivazione sensori temp\n");
 				SENSORS_ACTIVATE(sht11_sensor);
 
 				while(GET_COUNT(localMsg) > 0){
+					int temp = sht11_sensor.value(SHT11_SENSOR_TEMP);
+					printf("Produzione %u misura %d\n", GET_COUNT(localMsg), temp);
+					simple_udp_sendto(&udp_connection, &temp, sizeof(int), &addr);
 
-					simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
+				//	simple_udp_sendto(&udp_connection, sht11_sensor.value(SHT11_SENSOR_TEMP), sizeof(int), &addr);
 
 					SET_COUNT(localMsg, GET_COUNT(localMsg) - 1);
 
-					etimer_set(&et, GET_DELAY(localMsg)*CLOCK_SECOND);
-
-					PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
+					printf("In attesa su timer\n");
+					PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+					etimer_reset(&et);
+					printf("End Timer\n");
 
 				}
-
+				printf("Disattivazione sensori temp\n");
 				SENSORS_DEACTIVATE(sht11_sensor);
 
 		}
