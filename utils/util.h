@@ -7,6 +7,8 @@
 #define SINK 0
 #define NODE1 1
 #define NODE2 2
+#define NODE3 3
+#define NODE4 4
 
 #define UDP_PORT_CONFIG 4980
 #define UDP_PORT_COMMUN 3444
@@ -21,6 +23,12 @@
 				case NODE2:\
                                         uip_ipaddr(&a, 172, 16, 254, 49);\
                                         break;\
+				case NODE3:\
+					uip_ipaddr(&a, 172, 16, 105, 205);\
+					break;\
+				case NODE4:\
+					uip_ipaddr(&a, 172, 16, 198, 29);\
+					break;\
 				}} while(0)
 
 #define MAX_MEASURE 31

@@ -44,13 +44,13 @@ static void configReceiver(
 	switch(configState) {
 
 	case 0: // choose node
-		if(input == NODE1 || input == NODE2) {
+		if(input == NODE1 || input == NODE2 || input == NODE3 || input == NODE4) {
 			GET_ADDR(addr, input);
 			configState++;
 			printf("\nWhat do you want to measure?\n\n\t* %d = Light\n\t* %d = Temperature\n\n", LIGHT, TEMP);
 		} else {
 			printf("\nATTENTION: ID does not exist\n\n");
-			printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2);
+			printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2, NODE3, NODE4);
 		}
 		break;
 
@@ -87,7 +87,7 @@ static void configReceiver(
 			sendMsg[0] = 0;
 			sendMsg[1] = 0;
 			printf("\nREQUEST SENT!\n\n");
-			printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2);
+			printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2, NODE3, NODE4);
 		} else {
 			printf("\nATTENTION: Number of measures must be between 1 and %d\n\n", MAX_COUNT);
 			printf("\nHow many measures?\n\n");
@@ -125,7 +125,7 @@ PROCESS_THREAD(sink_process, ev, data) {
 	simple_udp_register(&udp_connection_config, UDP_PORT_CONFIG, NULL, UDP_PORT_CONFIG, configReceiver);
 	simple_udp_register(&udp_connection_commun, UDP_PORT_COMMUN, NULL, UDP_PORT_COMMUN, communReceiver);
 
-	printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2);
+	printf("\nAvailable nodes:\n\n\t* %d\n\t* %d\n\t* %d\n\t* %d\n\nInsert the ID of the node you want to communicate with:\n\n", NODE1, NODE2, NODE3, NODE4);
 
 	PROCESS_END();
 }
